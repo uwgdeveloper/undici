@@ -64,9 +64,11 @@ test('post abort signal w/ reason', async (t) => {
     const ures = await request(`http://0.0.0.0:${server.address().port}`, { signal: ac.signal })
     ac.abort(_err)
     try {
-      /* eslint-disable-next-line no-unused-vars */
-      for await (const chunk of ures.body) {
-        // Do nothing...
+      const it = ures.body[Symbol.asyncIterator]()
+      for (;;) {
+        const { done } = await it.next()
+        if (done) break
+        // Intentionally ignore chunk values; we only care about abort behavior.
       }
     } catch (err) {
       t.equal(err, _err)
