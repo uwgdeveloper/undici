@@ -45,9 +45,10 @@ test('pull dont\'t push', async (t) => {
 
   // consume the  stream
   try {
-    /* eslint-disable-next-line no-unused-vars */
-    for await (const chunk of res.body) {
-      // process._rawDebug('chunk', chunk)
+    const iterator = res.body[Symbol.asyncIterator]()
+    for (;;) {
+      const { done } = await iterator.next()
+      if (done) break
     }
   } catch {}
 })
